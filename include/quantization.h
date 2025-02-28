@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <utils.h>
 
 /**
  * Structure to hold quantization context information

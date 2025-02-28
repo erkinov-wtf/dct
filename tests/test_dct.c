@@ -4,6 +4,7 @@
  */
 
 #include "dct.h"
+#include <utils.h>
 
 /**
  * Calculate mean squared error between original and reconstructed blocks
