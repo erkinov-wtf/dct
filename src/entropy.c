@@ -829,16 +829,11 @@ int entropy_decode_block(EntropyContext *ctx, unsigned char *input, int input_si
     }
 
     // Create output buffer for 2D coefficients if not provided
-    //int allocate_output = 0;
     if (output[0] == NULL) {
-       // allocate_output = 1;
         for (int i = 0; i < block_size; i++) {
             output[i] = (int *) malloc(block_size * sizeof(int));
         }
     }
-
-    // Reverse zigzag scan to get 2D coefficients
-    int *pattern = generate_zigzag_pattern(block_size);
 
     // Initialize output with zeros
     for (int i = 0; i < block_size; i++) {
@@ -847,19 +842,73 @@ int entropy_decode_block(EntropyContext *ctx, unsigned char *input, int input_si
         }
     }
 
-    // Fill with zigzag data
-    for (int i = 0; i < total_size; i++) {
-        int pos = pattern[i];
-        int row = pos / block_size;
-        int col = pos % block_size;
-        if (row < block_size && col < block_size) {
-            output[row][col] = zigzag_data[i];
+    // THE KEY FIX: We need to convert from zigzag order back to 2D array properly
+    // The problem is that zigzag_pattern array maps FROM 2D position TO zigzag index
+    // But here we need to map FROM zigzag index TO 2D position
+
+    if (block_size == 8) {
+        // Create reverse mapping for 8x8 blocks
+        int row_map[64], col_map[64];
+
+        // Fill the mapping arrays: for each zigzag index, find its 2D position
+        for (int pos = 0; pos < 64; pos++) {
+            int i = pos / 8;
+            int j = pos % 8;
+            int zigzag_idx = zigzag_pattern_8x8[pos];
+            row_map[zigzag_idx] = i;
+            col_map[zigzag_idx] = j;
         }
+
+        // Use the mapping to fill the output block
+        for (int i = 0; i < 64; i++) {
+            output[row_map[i]][col_map[i]] = zigzag_data[i];
+        }
+    }
+    else if (block_size == 4) {
+        // Create reverse mapping for 4x4 blocks
+        int row_map[16], col_map[16];
+
+        // Fill the mapping arrays
+        for (int pos = 0; pos < 16; pos++) {
+            int i = pos / 4;
+            int j = pos % 4;
+            int zigzag_idx = zigzag_pattern_4x4[pos];
+            row_map[zigzag_idx] = i;
+            col_map[zigzag_idx] = j;
+        }
+
+        // Use the mapping to fill the output block
+        for (int i = 0; i < 16; i++) {
+            output[row_map[i]][col_map[i]] = zigzag_data[i];
+        }
+    }
+    else {
+        // For other block sizes, we need a general solution
+        int *pattern = generate_zigzag_pattern(block_size);
+        int *row_map = (int *) malloc(total_size * sizeof(int));
+        int *col_map = (int *) malloc(total_size * sizeof(int));
+
+        // Create the mappings
+        for (int pos = 0; pos < total_size; pos++) {
+            int i = pos / block_size;
+            int j = pos % block_size;
+            int zigzag_idx = pattern[pos];
+            row_map[zigzag_idx] = i;
+            col_map[zigzag_idx] = j;
+        }
+
+        // Map each zigzag index to its 2D position
+        for (int i = 0; i < total_size; i++) {
+            output[row_map[i]][col_map[i]] = zigzag_data[i];
+        }
+
+        free(pattern);
+        free(row_map);
+        free(col_map);
     }
 
     // Clean up
     free(zigzag_data);
-    free(pattern);
     free(symbols);
     free(original_symbols);
     free(codes);
@@ -868,3 +917,4 @@ int entropy_decode_block(EntropyContext *ctx, unsigned char *input, int input_si
 
     return 0;
 }
+

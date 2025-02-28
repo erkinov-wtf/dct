@@ -193,6 +193,15 @@ void test_entropy_codec(void) {
         }
     }
 
+    // Print original block for debugging
+    printf("Original block:\n");
+    for (int i = 0; i < block_size; i++) {
+        for (int j = 0; j < block_size; j++) {
+            printf("%4d ", block[i][j]);
+        }
+        printf("\n");
+    }
+
     // Initialize entropy context
     EntropyContext* ctx = entropy_init(block_size, 0); // Use Huffman coding
 
@@ -213,11 +222,32 @@ void test_entropy_codec(void) {
     result = entropy_decode_block(ctx, buffer, output_size, decoded_block);
     assert(result == 0);
 
-    // Verify decoded block matches original
+    // Print decoded block for debugging
+    printf("Decoded block:\n");
     for (int i = 0; i < block_size; i++) {
         for (int j = 0; j < block_size; j++) {
-            assert(block[i][j] == decoded_block[i][j]);
+            printf("%4d ", decoded_block[i][j]);
         }
+        printf("\n");
+    }
+
+    // Verify decoded block matches original and log differences
+    int mismatch_count = 0;
+    for (int i = 0; i < block_size; i++) {
+        for (int j = 0; j < block_size; j++) {
+            if (block[i][j] != decoded_block[i][j]) {
+                mismatch_count++;
+                printf("Mismatch at position [%d][%d]: Original=%d, Decoded=%d\n",
+                       i, j, block[i][j], decoded_block[i][j]);
+            }
+        }
+    }
+
+    if (mismatch_count > 0) {
+        printf("Total mismatches: %d\n", mismatch_count);
+        assert(0); // Fail the test
+    } else {
+        printf("All values match!\n");
     }
 
     // Clean up
