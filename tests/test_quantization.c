@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "../include/dct.h"
+#include <utils.h>
 #include "../include/quantization.h"
 
 // Test helper function to print a matrix
@@ -31,34 +31,6 @@ void print_int_matrix(const char* name, int **matrix, int size) {
         printf("\n");
     }
     printf("\n");
-}
-
-// Helper function to create int array
-int** alloc_int_array(int rows, int cols) {
-    int **array = (int**) malloc(rows * sizeof(int*));
-    if (!array) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    for (int i = 0; i < rows; i++) {
-        array[i] = (int*) malloc(cols * sizeof(int));
-        if (!array[i]) {
-            fprintf(stderr, "Memory allocation failed\n");
-            exit(EXIT_FAILURE);
-        }
-        memset(array[i], 0, cols * sizeof(int));
-    }
-
-    return array;
-}
-
-// Helper function to free int array
-void free_int_array(int **array, int rows) {
-    for (int i = 0; i < rows; i++) {
-        free(array[i]);
-    }
-    free(array);
 }
 
 // Test quantization matrix generation

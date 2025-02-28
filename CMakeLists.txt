@@ -8,9 +8,13 @@ include_directories(include)
 add_executable(
         AdaptiveDCT
 
+        src/utils.c
         src/dct.c
         src/quantization.c
+        src/entropy.c
 
         tests/test_dct.c
         tests/test_quantization.c
+        tests/test_entropy.c
+
 )

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <utils.h>
 
 #define PI 3.14159265358979323846
 
@@ -58,23 +59,6 @@ void dct_forward(DCTContext *ctx, double **input, double **output);
  * @param output Output block for reconstructed spatial data (size: block_size x block_size)
  */
 void dct_inverse(DCTContext *ctx, double **input, double **output);
-
-/**
- * Helper function to allocate 2D arrays
- *
- * @param rows Number of rows
- * @param cols Number of columns
- * @return Allocated 2D array
- */
-double** alloc_array(int rows, int cols);
-
-/**
- * Helper function to free 2D arrays
- *
- * @param array Array to free
- * @param rows Number of rows
- */
-void free_array(double **array, int rows);
 
 /**
  * Helper function to create and initialize a block from pixel data

@@ -105,36 +105,6 @@ void dct_inverse(DCTContext *ctx, double **input, double **output) {
 }
 
 
-// func to allocate 2D arrays
-double **alloc_array(int rows, int cols) {
-    double **new_array = (double **) malloc(rows * sizeof(double *));
-    if (!new_array) {
-        fprintf(stderr, "Memory allocation failed, when creating new 2D array\n");
-        exit(EXIT_FAILURE);
-    }
-
-    for (int i = 0; i < rows; ++i) {
-        new_array[i] = (double *) malloc(cols * sizeof(double));
-        if (!new_array[i]) {
-            fprintf(stderr, "Memory allocation failed, when creating new 2D array\n");
-            exit(EXIT_FAILURE);
-        }
-        memset(new_array[i], 0, cols * sizeof(double));
-    }
-
-    return new_array;
-}
-
-
-// func to free 2D arrays
-void free_array(double **array, int rows) {
-    for (int i = 0; i < rows; ++i) {
-        free(array[i]);
-    }
-    free(array);
-}
-
-
 // func to create and init block from pixels
 double **create_block_from_pixels(unsigned char *pixels, int width, int row_start, int col_start, int block_size) {
     double **block = alloc_array(block_size, block_size);
