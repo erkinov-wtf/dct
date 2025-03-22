@@ -12,9 +12,10 @@ add_executable(
         src/dct.c
         src/quantization.c
         src/entropy.c
+        src/image.c
 
         tests/test_dct.c
         tests/test_quantization.c
         tests/test_entropy.c
-
+        tests/test_image.c
 )

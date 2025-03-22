@@ -3,11 +3,9 @@
  * Part of Adaptive DCT Image Compressor
  */
 
-#include "../include/entropy.h"
+#include <entropy.h>
 #include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <utils.h>
 
 #define INITIAL_CAPACITY 64
 #define MAX_HUFFMAN_CODE_LEN 32
